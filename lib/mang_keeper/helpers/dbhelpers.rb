@@ -11,16 +11,15 @@ module MangKeeper
     end
   
     def upload_file_to_db filename, database = @default_db, options = {}
-      do_log = options[:log]
-      do_log = true if log.nil?
-      full_path_in_log = options[:full_path_in_log]
-      full_path_in_log = false if full_path_in_log.nil?
+      do_log = options[:log].nil? ? true : options[:log]
+      full_path_in_log = options[:full_path_in_log].nil? ? true : options[:full_path_in_log]
+      read_only_mode = options[:read_only_mode].nil? ? false : options[:read_only_mode]
       
       if do_log
-        log_filename = full_path_in_log ? file : File.basename(file)
-        puts "Uploading file: #{log_filename} to #{db}"
+        log_filename = full_path_in_log ? filename : File.basename(filename)
+        puts "Uploading file: #{log_filename} to #{database}"
       end
-      `mysql -B -u#{@mysql_user} -p#{@mysql_pass} -D#{database} < "#{filename}"`
+      `mysql -B -u#{@mysql_user} -p#{@mysql_pass} -D#{database} < "#{filename}"` unless read_only_mode
       # puts "Done" if do_log
     end
     
@@ -40,10 +39,10 @@ module MangKeeper
       db = options[:db] || 'mangos'
       exclude = options[:exclude] || []
       filters = options[:filters] || []
-      Dir.glob(glob).version_sort.each do |file|
+      Dir.glob(glob).each do |file|
         next if exclude.member? File.basename(file)
         next if filters.any? { |filter_proc| filter_proc && !filter_proc.call(file) }
-        upload_file_to_db file, db
+        upload_file_to_db file, db, { :read_only_mode => options[:read_only] }
       end
     end
 

@@ -13,11 +13,15 @@ module MangKeeper
     
     # Allows tobind filter for specific update class
     # Update will only be added if filter value is true
-    def filter(class_name, filter_code = nil, &block)
+    def filter(class_names, filter_code = nil, &block)
       filter_code = block unless filter_code
       raise ArgumentError, "You must pass a block or a proc as a second argument!" unless filter_code
-      @filters[class_name] ||= []
-      @filters[class_name] << filter_code
+      class_names = [class_names] unless class_names.kind_of?(Array)
+      class_names.each do |class_name|
+        @filters[class_name] ||= []
+        @filters[class_name] << filter_code
+      end
+      self
     end
     
     def add(update)
@@ -38,11 +42,15 @@ module MangKeeper
     end
     alias_method :[], :scan_by_glob
     
-    def apply_all
+    def apply_all(read_only = false)
       sorted_list.each do |update|
         filename, database = update.upload_info
-        puts "Will upload #{filename} to #{database}"
-        update.allpied!
+        if read_only
+          puts "Will upload #{filename} to #{database} [#{update.class.name}]"
+        else          
+          MangKeeper.scenario.upload_file_to_db(filename, database)
+        end
+        update.applied!
       end
     end
     

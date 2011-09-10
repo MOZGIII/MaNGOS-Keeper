@@ -3,6 +3,10 @@ module MangKeeper
     def application
       @application ||= Application.new
     end
+    
+    def scenario
+      application.scenario
+    end
   end
   
   class Application
@@ -11,6 +15,8 @@ module MangKeeper
     DEFAULT_SCENARIO = "info"
     
     attr_accessor :skip_init_check
+    attr_reader :scenario
+    
     def initialize
       @skip_init_check = false
     end
@@ -146,5 +152,6 @@ module MangKeeper
       @scenario.work
     end
   end
+  
 end
 
