@@ -54,6 +54,10 @@ module MangKeeper
       end
     end
     
+    def latest_update
+      sorted_list.last
+    end
+    
     def to_s
       sorted_list.map(&:to_s).join("\n")
     end
