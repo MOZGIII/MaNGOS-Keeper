@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.version     = MangKeeper::VERSION
   s.authors     = ["MOZGIII"]
   s.email       = ["mike-n@narod.ru"]
-  s.homepage    = ""
+  s.homepage    = "http://github.com/MOZGIII/MaNGOS-Keeper"
   s.summary     = %q{MaNGOS Keeper}
   s.description = %q{Helps to maintain MaNGOS server.}
 
