@@ -51,16 +51,16 @@ module MangKeeper
       @initializer = Initializer.new 
     end
     
-    def dry_run?
-      !!options.dryrun
+    def db_readonly?
+      !!options.db_readonly
     end
     
     # A list of all the standard options, suitable for
     # passing to OptionParser.
     def standard_options
       [
-        ['--dry-run', '-n', "Do a dry run without executing actions.",
-          lambda { |value| options.dryrun = true }
+        ['--db-read-only', '-n', "Do not really execute mysql commands.",
+          lambda { |value| options.db_readonly = true }
         ],
         ['--storedir',  '-d', "Specify mangkeeper internal storage directory",
           lambda { |value| options.storagedir = value }

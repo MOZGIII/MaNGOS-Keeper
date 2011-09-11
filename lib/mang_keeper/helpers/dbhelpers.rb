@@ -19,12 +19,13 @@ module MangKeeper
         log_filename = full_path_in_log ? filename : File.basename(filename)
         puts "Uploading file: #{log_filename} to #{database}"
       end
-      `mysql -B -u#{@mysql_user} -p#{@mysql_pass} -D#{database} < "#{filename}"` unless read_only_mode
+      `mysql -B -u#{@mysql_user} -p#{@mysql_pass} -D#{database} < "#{filename}"` if !read_only_mode && !MangKeeper.application.db_readonly?
       # puts "Done" if do_log
     end
     
     def recreate_db database
       puts "Recreating DB: #{database}"
+      return if MangKeeper.application.db_readonly?
       if os_windows?
         `echo DROP DATABASE IF EXISTS #{database}; | mysql -B -u#{@mysql_user} -p#{@mysql_pass}`
         `echo CREATE DATABASE IF NOT EXISTS #{database}; | mysql -B -u#{@mysql_user} -p#{@mysql_pass}`
